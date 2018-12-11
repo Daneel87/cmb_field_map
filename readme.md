@@ -44,6 +44,11 @@ $cmb->add_field( array(
 
 * `split_values` Save the latitude/longitude values into two custom fields, they will be stored as `$id . '_latitude'` and `$id . '_longitude'`.
 
+** Added in the remaining address fields, and timezone offset. Remove wp code to hide fields from administrators
+
+*** `map_drawings` set to true in order to draw polygon shapes on the map.  (Code needs to be expanded for saving polygon data for rendering as well as possible color control)
+
+
 ## Screenshot
 
 ![Image](screenshot-1.png?raw=true)
