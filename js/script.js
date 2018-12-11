@@ -10,14 +10,26 @@
 	function initializeMap( mapInstance ) {
 		var searchInput = mapInstance.find( '.pw-map-search' );
 		var mapCanvas = mapInstance.find( '.pw-map' );
-		var latitude = mapInstance.find( '.pw-map-latitude' );
-		var longitude = mapInstance.find( '.pw-map-longitude' );
+		var lat = mapInstance.find( '.pw-map-lat' );
+		var lng = mapInstance.find( '.pw-map-lng' );
+		var utcOffset = mapInstance.find( '.pw-map-utc_offset' );
+		var formattedAddress = mapInstance.find( '.pw-map-formatted_address' );
+		var placeName = mapInstance.find( '.pw-map-place_name' );
+		var streetNumber = mapInstance.find( '.pw-map-street_number' );
+		var route = mapInstance.find( '.pw-map-route' );
+		var locality = mapInstance.find( '.pw-map-locality' );
+		var state = mapInstance.find( '.pw-map-administrative_area_level_1' );
+		var postalCode = mapInstance.find( '.pw-map-postal_code' );
+		var country = mapInstance.find( '.pw-map-country' );
+		var activateDrawings = mapInstance.find( '.pw-map-drawing_manager' );
+		activateDrawings.val('YES');
+
 		var latLng = new google.maps.LatLng( 54.800685, -4.130859 );
 		var zoom = 5;
 
 		// If we have saved values, let's set the position and zoom level
-		if ( latitude.val().length > 0 && longitude.val().length > 0 ) {
-			latLng = new google.maps.LatLng( latitude.val(), longitude.val() );
+		if ( lat.val().length > 0 && lng.val().length > 0 ) {
+			latLng = new google.maps.LatLng( lat.val(), lng.val() );
 			zoom = 17;
 		}
 
@@ -36,8 +48,128 @@
 		};
 		var marker = new google.maps.Marker( markerOptions );
 
-		if ( latitude.val().length > 0 && longitude.val().length > 0 ) {
+		if ( lat.val().length > 0 && lng.val().length > 0 ) {
 			marker.setPosition( latLng );
+		}
+
+		if ( activateDrawings.val() === 'YES' ) {
+			// Polyline Options
+			var polylineOptions = {
+				map: map,
+				draggable: true,
+				strokeColor: '#ff0000',
+				strokeWeight: 5,
+				clickable: true,
+				editable: true,
+				zIndex: 1
+			};
+			var osPolyline = new google.maps.Polyline(polylineOptions);
+			// Circle Options
+			var circleOptions = {
+				map: map,
+				draggable: true,
+				fillColor: '#ffff00',
+				fillOpacity: 0.5,
+				strokeWeight: 3,
+				clickable: true,
+				editable: true,
+				zIndex: 1
+			};
+			var osCircle = new google.maps.Circle(circleOptions);
+			// Rectangle Options
+			var rectangleOptions = {
+				map: map,
+				draggable: true,
+				fillColor: '#ff0000',
+				fillOpacity: 0.5,
+				strokeWeight: 3,
+				clickable: true,
+				editable: true,
+				zIndex: 1
+			};
+			var osRectangle = new google.maps.Rectangle(rectangleOptions);
+			// Polygon Options
+			var polygonOptions = {
+				map: map,
+				draggable: true,
+				fillColor: '#BCDCF9',
+				fillOpacity: 0.5,
+				strokeWeight: 3,
+				strokeColor: '#57ACF9',
+				clickable: true,
+				editable: true,
+				zIndex: 1
+			};
+			var osPolygon = new google.maps.Polygon(polygonOptions);
+
+			// Drawing Manager
+			var drawingManager = new google.maps.drawing.DrawingManager({
+				drawingMode: null,
+				drawingControl: true,
+				drawingControlOptions: {
+					position: google.maps.ControlPosition.TOP_CENTER,
+					drawingModes: [
+					//google.maps.drawing.OverlayType.MARKER,
+					google.maps.drawing.OverlayType.CIRCLE,
+					google.maps.drawing.OverlayType.POLYGON,
+					google.maps.drawing.OverlayType.POLYLINE,
+					google.maps.drawing.OverlayType.RECTANGLE]
+				},
+			});
+			//console.log(drawingManager)
+			drawingManager.setMap(map)
+
+			google.maps.event.addListener(drawingManager, 'polylinecomplete', function (polyline) {
+				//alert ("This is a polyline!");
+				var polylinePath = polyline.getPath();
+				polyline.setMap(null);
+				osPolyline.setPath(polylinePath);
+				osPolyline.setMap(map);
+			});
+
+			google.maps.event.addListener(osPolyline, 'rightclick', function () {
+				osPolyline.setMap(null);
+			});
+
+			google.maps.event.addListener(drawingManager, 'circlecomplete', function (circle) {
+				//alert ("This is a circle!");
+				var circleCenter = circle.getCenter();
+				var circleRadius = circle.getRadius();
+				circle.setMap(null);
+				osCircle.setCenter(circleCenter);
+				osCircle.setRadius(circleRadius);
+				osCircle.setMap(map);
+			});
+
+			google.maps.event.addListener(osCircle, 'rightclick', function () {
+				osCircle.setMap(null);
+			});
+
+			google.maps.event.addListener(drawingManager, 'rectanglecomplete', function (rectangle) {
+				//alert ("This is a rectangle!");
+				var rectangleBounds = rectangle.getBounds();
+				var rectangleNE = rectangle.getBounds().getNorthEast();
+				var rectangleSW = rectangle.getBounds().getSouthWest();
+				rectangle.setMap(null);
+				osRectangle.setBounds(rectangleBounds);
+				osRectangle.setMap(map);
+			});
+
+			google.maps.event.addListener(osRectangle, 'rightclick', function () {
+				osRectangle.setMap(null);
+			});
+
+			google.maps.event.addListener(drawingManager, 'polygoncomplete', function (polygon) {
+				//alert ("This is a polygon!");
+				var polygonPaths = polygon.getPaths();
+				polygon.setMap(null);
+				osPolygon.setPaths(polygonPaths);
+				osPolygon.setMap(map);
+			});
+
+			google.maps.event.addListener(osPolygon, 'rightclick', function () {
+				osPolygon.setMap(null);
+			});
 		}
 
 		// Search
@@ -59,8 +191,23 @@
 
 			marker.setPosition( place.geometry.location );
 
-			latitude.val( place.geometry.location.lat() );
-			longitude.val( place.geometry.location.lng() );
+			lat.val( place.geometry.location.lat() );
+			lng.val( place.geometry.location.lng() );
+			formattedAddress.val( place.formatted_address );
+			utcOffset.val( place.utc_offset );
+			function extractFromAdress(components, type) {
+				for (var i = 0; i < components.length; i++)
+				for (var j = 0; j < components[i].types.length; j++)
+				if (components[i].types[j] == type) return components[i].long_name;
+				return "";
+			}
+			placeName.val( place.name );
+			streetNumber.val( extractFromAdress(place.address_components, 'street_number') );
+			route.val( extractFromAdress(place.address_components, 'route') );
+			locality.val( extractFromAdress(place.address_components, 'locality') );
+			state.val( extractFromAdress(place.address_components, 'administrative_area_level_1') );
+			postalCode.val( extractFromAdress(place.address_components, 'postal_code') );
+			country.val( extractFromAdress(place.address_components, 'country') );
 		});
 
 		$( searchInput ).keypress( function( event ) {
@@ -71,8 +218,8 @@
 
 		// Allow marker to be repositioned
 		google.maps.event.addListener( marker, 'drag', function() {
-			latitude.val( marker.getPosition().lat() );
-			longitude.val( marker.getPosition().lng() );
+			lat.val( marker.getPosition().lat() );
+			lng.val( marker.getPosition().lng() );
 		});
 
 		maps.push( map );
