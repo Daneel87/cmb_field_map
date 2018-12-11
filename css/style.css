@@ -8,3 +8,6 @@
 .pw-map img {
 	max-width: none;
 }
+.pw-map-place_name {
+	width: 99%;
+}
