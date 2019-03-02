@@ -4,17 +4,17 @@
 
 Plugin Name: CMB2 Field Type: Google Maps
 
-Plugin URI: https://github.com/dbrock89/cmb_field_map
+Plugin URI: https://github.com/Daneel87/cmb_field_map
 
-GitHub Plugin URI: https://github.com/dbrock89/cmb_field_map
+GitHub Plugin URI: https://github.com/Daneel87/cmb_field_map
 
 Description: Google Maps field type for CMB2.
 
 Version: 2.2.0
 
-Author: D. Brock
+Author: Davide Melle
 
-Author URI: https://github.com/dbrock89
+Author URI: https://github.com/Daneel87
 
 License: GPLv2+
 
@@ -254,8 +254,6 @@ class PW_CMB2_Field_Google_Maps {
 
 		echo '<div class="pw-map"></div>';
 
-		echo '<br />';
-
 		echo $field_type_object->input(array(
 
 			'type'       => current_user_can( 'manage_options' ) ? 'text' : 'hidden',
@@ -266,7 +264,7 @@ class PW_CMB2_Field_Google_Maps {
 
 			'value'      => isset( $field_escaped_value['lat'] ) ? $field_escaped_value['lat'] : '',
 
-			'class'      => 'pw-map-lat',
+			'class'      => 'small-text',
 
 			'placeholder'       => 'Latitude',
 
@@ -282,7 +280,7 @@ class PW_CMB2_Field_Google_Maps {
 
 			'value'      => isset( $field_escaped_value['lng'] ) ? $field_escaped_value['lng'] : '',
 
-			'class'      => 'pw-map-lng',
+			'class'      => 'small-text',
 
 			'placeholder'       => 'Longitude',
 
@@ -298,7 +296,7 @@ class PW_CMB2_Field_Google_Maps {
 
 			'value'      => isset( $field_escaped_value['formatted_address'] ) ? $field_escaped_value['formatted_address'] : '',
 
-			'class'      => 'pw-map-formatted_address',
+			'class'      => 'large-text',
 
 			'placeholder'       => 'Formated Address',
 
