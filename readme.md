@@ -37,12 +37,13 @@ $cmb->add_field( array(
 	'id' => $prefix . 'location',
 	'type' => 'pw_map',
 	// 'split_values' => true, // Save latitude and longitude as two separate fields
+	// 'map_drawings' => true // set to true in order to draw polygon shapes on the map.  (Code needs to be expanded for saving polygon data for rendering as well as possible color control)
 ) );
 ```
 
 #### Extra Parameters:
 
-* `split_values` Save the latitude/longitude values into two custom fields, they will be stored as `$id . '_latitude'` and `$id . '_longitude'`.
+* `split_values` Save the latitude/longitude values into two custom fields, they will be stored as `$id . '_lat'` and `$id . '_long'`.
 
 ** Added in the remaining address fields, and timezone offset. Remove wp code to hide fields from administrators
 
