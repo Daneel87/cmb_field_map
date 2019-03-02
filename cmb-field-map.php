@@ -1,43 +1,30 @@
 <?php
+
 /*
-
 Plugin Name: CMB2 Field Type: Google Maps
-
 Plugin URI: https://github.com/Daneel87/cmb_field_map
-
 GitHub Plugin URI: https://github.com/Daneel87/cmb_field_map
-
 Description: Google Maps field type for CMB2.
-
 Version: 2.2.0
-
 Author: Davide Melle
-
 Author URI: https://github.com/Daneel87
-
 License: GPLv2+
-
 */
+
 /**
-
 * Class PW_CMB2_Field_Google_Maps.
-
 */
-class PW_CMB2_Field_Google_Maps
-{
+class PW_CMB2_Field_Google_Maps {
+    
                 /**
-                
                 * Current version number.
-                
                 */
                 const VERSION = '2.2.0';
+                
                 /**
-                
                 * Initialize the plugin by hooking into CMB2.
-                
                 */
-                public function __construct()
-                {
+                public function __construct() {
                                 add_filter('cmb2_render_pw_map', array(
                                                 $this,
                                                 'render_pw_map'
@@ -51,13 +38,11 @@ class PW_CMB2_Field_Google_Maps
                                                 'google_api_key_constant'
                                 ));
                 }
+                
                 /**
-                
                 * Render field.
-                
                 */
-                public function render_pw_map($field, $field_escaped_value, $field_object_id, $field_object_type, $field_type_object)
-                {
+                public function render_pw_map($field, $field_escaped_value, $field_object_id, $field_object_type, $field_type_object) {
                                 // Get the Google API key from the field's parameters.
                                 $api_key = $field->args('api_key');
                                 // Allow a custom hook to specify the key.
@@ -179,13 +164,11 @@ class PW_CMB2_Field_Google_Maps
                                                 ));
                                 }
                 }
+                
                 /**
-                
                 * Optionally save the latitude/longitude values into two custom fields.
-                
                 */
-                public function sanitize_pw_map($override_value, $value, $object_id, $field_args)
-                {
+                public function sanitize_pw_map($override_value, $value, $object_id, $field_args) {
                                 if (isset($field_args['split_values']) && $field_args['split_values']) {
                                                 if (!empty($value['lat'])) {
                                                                 update_post_meta($object_id, $field_args['id'] . '_lat', $value['lat']);
@@ -226,13 +209,11 @@ class PW_CMB2_Field_Google_Maps
                                 }
                                 return $value;
                 }
+                
                 /**
-                
                 * Enqueue scripts and styles.
-                
                 */
-                public function setup_admin_scripts($api_key)
-                {
+                public function setup_admin_scripts($api_key) {
                                 wp_register_script('pw-google-maps-api', "https://maps.googleapis.com/maps/api/js?key={$api_key}&libraries=drawing,places,geometry", null, null);
                                 wp_enqueue_script('pw-google-maps', plugins_url('js/script.js', __FILE__), array(
                                                 'pw-google-maps-api',
@@ -240,13 +221,11 @@ class PW_CMB2_Field_Google_Maps
                                 ), self::VERSION);
                                 wp_enqueue_style('pw-google-maps', plugins_url('css/style.css', __FILE__), array(), self::VERSION);
                 }
+                
                 /**
-                
-                * Default filter to return a Google API key constant if defined.
-                
+                * Default filter to return a Google API key constant if defined
                 */
-                public function google_api_key_constant($google_api_key = null)
-                {
+                public function google_api_key_constant($google_api_key = null) {
                                 // Allow the field's 'api_key' parameter or a custom hook to take precedence.
                                 if (!empty($google_api_key)) {
                                                 return $google_api_key;
